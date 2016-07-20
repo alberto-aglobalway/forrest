@@ -2,8 +2,7 @@
 
 namespace Omniphx\Forrest\Providers\Laravel;
 
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Crypt;
+use Crypt;
 use Omniphx\Forrest\Exceptions\MissingRefreshTokenException;
 use Omniphx\Forrest\Exceptions\MissingTokenException;
 use Omniphx\Forrest\Interfaces\StorageInterface;
@@ -19,7 +18,7 @@ abstract class LaravelStorageProvider implements StorageInterface
      */
     public function putTokenData($token)
     {
-        $encryptedToken = Crypt::encrypt($token);
+        $encryptedToken = $token;
 
         return $this->put('token', $encryptedToken);
     }
@@ -34,10 +33,10 @@ abstract class LaravelStorageProvider implements StorageInterface
         if ($this->has('token')) {
             $token = $this->get('token');
 
-            return Crypt::decrypt($token);
+            return $token;
         }
 
-        throw new MissingTokenException(sprintf('No token available in \''.Config::get('forrest.storage.type').'\' storage'));
+        throw new MissingTokenException(sprintf('No token available in \''.\Config::get('forrest.storage.type').'\' storage'));
     }
 
     /**
@@ -49,7 +48,7 @@ abstract class LaravelStorageProvider implements StorageInterface
      */
     public function putRefreshToken($token)
     {
-        $encryptedToken = Crypt::encrypt($token);
+        $encryptedToken = $token;
 
         return $this->put('refresh_token', $encryptedToken);
     }
@@ -64,7 +63,7 @@ abstract class LaravelStorageProvider implements StorageInterface
         if ($this->has('refresh_token')) {
             $token = $this->get('refresh_token');
 
-            return Crypt::decrypt($token);
+            return $token;
         }
 
         throw new MissingRefreshTokenException(sprintf('No refresh token stored in current session. Verify you have added refresh_token to your scope items on your connected app settings in Salesforce.'));
